@@ -34,18 +34,21 @@ The cross track error ```cte[t]``` is calculated as a error of the vehicle posit
 The transformed track waypoints are used to build a 3rd order polynomial ```f(x)``` by polyfit method. The resulting polymomial coeffitients are evaluated against the vehicle ```y``` position by ```polyeval``` method to calculate the cross track error ```cte```. Since the vehicle is located in the center of the coordinate system, ```x``` and ```y``` are ```0```, and 
 ```cte = polyeval(coeffs, 0);```.
 
-The vehicle orientation error epsi is calculated as a difference between the actual vehicle orientation angle psi and a desired orientation. The desired orientation is an angle of the tangent line to the 3rd order polynomial curve f(x) or arctan(f'(x)), where f'(x) is a derivative of the polinomial f. Since in the center of the coordinate system x = 0, the desired orientation is calculated atan(f'(x)) = atan(coeffs[1]). Also after the transformation of the coordinates the vehicle is heading in x direction and the orientation psi = 0, so epsi = psi - atan(f'(x)) = -atan(coeff[1]).
+The vehicle orientation error ```epsi``` is calculated as a difference between the actual vehicle orientation angle ```psi``` and a desired orientation. The desired orientation is an angle of the tangent line to the 3rd order polynomial curve ```f(x)``` or ```arctan(f'(x))```, where ```f'(x)``` is a derivative of the polinomial ```f```. Since in the center of the coordinate system ```x = 0```, the desired orientation is calculated ```atan(f'(x)) = atan(coeffs[1])```. Also after the transformation of the coordinates the vehicle is heading in ```x``` direction and the orientation ```psi = 0```, so ```epsi = psi - atan(f'(x)) = -atan(coeff[1])```.
 
-The resulting state vector provided to the MPC is [0, 0, 0, v, cte, epsi]. The MPC is using an optimizer to calculate the vehicle control inputs (actuators), steering angle delta and acceleration a, and to minimize the cost function.
+The resulting state vector provided to the MPC is ```[0, 0, 0, v, cte, epsi]```. The MPC is using an optimizer to calculate the vehicle control inputs (actuators), steering angle ```delta``` and acceleration ```a```, and to minimize the cost function.
 
-The kinematic model is using following equations to update the vehicle state after a timestep dt:
-The transformed track waypoints are used to build a 3rd order polynomial f(x) by polyfit method. The resulting polymomial coeffitients are evaluated against the vehicle y position by polyeval method to calculate the cross track error cte. Since the vehicle is located in the center of the coordinate system, x and y are 0, and cte = polyeval(coeffs, 0);.
+The kinematic model is using following equations to update the vehicle state after ```a``` timestep ```dt```:
 
-The vehicle orientation error epsi is calculated as a difference between the actual vehicle orientation angle psi and a desired orientation. The desired orientation is an angle of the tangent line to the 3rd order polynomial curve f(x) or arctan(f'(x)), where f'(x) is a derivative of the polinomial f. Since in the center of the coordinate system x = 0, the desired orientation is calculated atan(f'(x)) = atan(coeffs[1]). Also after the transformation of the coordinates the vehicle is heading in x direction and the orientation psi = 0, so epsi = psi - atan(f'(x)) = -atan(coeff[1]).
-
-The resulting state vector provided to the MPC is [0, 0, 0, v, cte, epsi]. The MPC is using an optimizer to calculate the vehicle control inputs (actuators), steering angle delta and acceleration a, and to minimize the cost function.
-
-The kinematic model is using following equations to update the vehicle state after a timestep dt:
+```
+x[t+1] = x[t] + v[t] * cos(psi[t]) * dt
+y[t+1] = y[t] + v[t] * sin(psi[t]) * dt
+psi[t+1] = psi[t] + v[t] / Lf * delta[t] * dt
+v[t+1] = v[t] + a[t] * dt
+cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt
+epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt
+```
+The model is using 2 constraints as the actuator limitations of the steering angle ```delta``` and acceleration ```a```, which are defined as the lower and upper boundaries. Such as the steering angle boundaries are from ```-25``` to ```25``` degrees. The acceleration boundaries are from ```-1``` (full brake) to ```1``` (full acceleration).
 
 ## Dependencies
 
