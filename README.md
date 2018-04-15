@@ -1,7 +1,26 @@
-# CarND-Controls-MPC
-Self-Driving Car Engineer Nanodegree Program
+# Overview
 
----
+The goal of this project is to implement Model Predictive Control (MPC) and to drive a vehicle around a simulated road track. A cross track error (CTE) is calculated in the project code. Additionally, there's a 100 millisecond latency between actuations commands on top of the connection latency.
+
+This solution makes use of the IPOPT and CPPAD libraries to calculate an optimal trajectory and its associated actuation commands in order to minimize error with a third-degree polynomial fit to the given waypoints. The optimization considers only a short duration's worth of waypoints, and produces a trajectory for that duration based upon a model of the vehicle's kinematics and a cost function based mostly on the vehicle's cross-track error (roughly the distance from the track waypoints) and orientation angle error, with other cost factors included to improve performance.
+
+## Model
+
+The implemented MPC is using a global kinematic model to calculate a predicted vehicle trajectory. In the project the kinematic model receives a vehicle ```state``` as a vector of 6 elements:
+
+* vehicle position coordinates ```x``` and ```y```
+* vehicle orientation ```psi```
+* vehicle velocity ```v```
+* vehicle cross track error ```cte``` and
+* vehicle orientation error ```epsi```
+
+The first four state vector elements at a timestep ```t``` are provided by the vehicle simulator:
+
+* current vehicle position coordinates ```x[t]``` and ```y[t]```
+* vehicle orientation ```psi[t]``` in radians
+* vehicle velocity ```v[t]``` in mph
+
+The other two state vector elements, ```cte[t]``` and ```epsi[t]```, are calculated.
 
 ## Dependencies
 
