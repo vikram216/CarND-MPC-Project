@@ -25,10 +25,10 @@ The other two state vector elements, ```cte[t]``` and ```epsi[t]```, are calcula
 The cross track error ```cte[t]``` is calculated as a error of the vehicle position in ```y``` direction by evaluating the vehicle position at ```x``` and substracting the ```y``` coordinate. The simulator provides 6 track waypoints at any timestep ```t``` as 2 vectors ```ptsx``` and ```ptsy``` in global map coordinate system. In order to be evaluated against the actual vehicle position the track waypoints coordinates are transformed from global coordinates to the vehicle coordinate system. This is done by shifting the center of the coordinate system to the vehicle position and rotating it (counterclockwise) ```-psi``` radians to get zero orientation angle in ```x``` direction:
 
 ```
-            double shift_x = ptsx[i] - npx;
-            double shift_y =  ptsy[i] - npy;
-            waypoints_x[i] = (shift_x * cos(0-npsi) - shift_y * sin(0-npsi));
-            waypoints_y[i] = (shift_x * sin(0-npsi) + shift_y * cos(0-npsi));
+double shift_x = ptsx[i] - npx;
+double shift_y =  ptsy[i] - npy;
+waypoints_x[i] = (shift_x * cos(0-npsi) - shift_y * sin(0-npsi));
+waypoints_y[i] = (shift_x * sin(0-npsi) + shift_y * cos(0-npsi));
 ```
 
 The transformed track waypoints are used to build a 3rd order polynomial ```f(x)``` by polyfit method. The resulting polymomial coeffitients are evaluated against the vehicle ```y``` position by ```polyeval``` method to calculate the cross track error ```cte```. Since the vehicle is located in the center of the coordinate system, ```x``` and ```y``` are ```0```, and 
